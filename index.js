@@ -34,8 +34,18 @@ exports.handler = async (event) => {
     }
 
     // Webhookにて共有された task ID からチケットの情報を取得
+    console.log('Webhook data : ' + event.body);
     const body = JSON.parse(event.body);
-    const taskId = body.events[0].resource.gid;
+    
+    task = body.events.filter(event => event.parent.resource_type === 'project')
+    if (task.length == 0){
+        // Webhookのデータを精査。セクションの移動などで発生したWebhookだった場合は後続処理は行わない。
+        return response = {
+            statusCode: 200
+        };
+    }
+
+    const taskId = task[0].resource.gid;
     const taskResponse = await axios(
         {
             method: 'GET',
@@ -75,10 +85,8 @@ exports.handler = async (event) => {
         }
     ).catch(err => console.error(err))
 
-    const response = {
+    return response = {
         statusCode: 200
     };
-
-    return response;
 };
 
