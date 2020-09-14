@@ -57,10 +57,16 @@ exports.handler = async (event) => {
         }
     ).catch(err => console.error(err))
 
+    const taskData = taskResponse.data.data
+    if (taskData.assignee != null){
+        // Webhookのデータを精査。ユーザーの追加で発生したWebhookタスクは無視する。
+        return response = {
+            statusCode: 200
+        };
+    }
     // データを整形してSlackに通知
     let partnerName = '未設定'
     let trainingType = '未設定'
-    const taskData = taskResponse.data.data
     taskData.custom_fields.forEach(field => {
         if (field.name === 'パートナー名' && field.text_value != null) {
             partnerName = field.text_value
