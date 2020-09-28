@@ -39,6 +39,7 @@ exports.handler = async (event) => {
     
     task = body.events.filter(event => event.parent.resource_type === 'project')
     if (task.length == 0){
+        console.log('This event is not task creation.');
         // Webhookのデータを精査。セクションの移動などで発生したWebhookだった場合は後続処理は行わない。
         return response = {
             statusCode: 200
@@ -60,6 +61,7 @@ exports.handler = async (event) => {
     const taskData = taskResponse.data.data
     if (taskData.assignee != null){
         // Webhookのデータを精査。ユーザーの追加で発生したWebhookタスクは無視する。
+        console.log('This task is already assign anyone.')
         return response = {
             statusCode: 200
         };
